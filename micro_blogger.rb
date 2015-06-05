@@ -13,6 +13,7 @@ class MicroBlogger
       puts "Message cannot be longer than 140 characters long"
     else
       @client.update(message)
+      puts "You tweeeted \"#{message}\""
     end
   end
   
@@ -35,6 +36,16 @@ class MicroBlogger
     end
   end
   
+  def followers_list
+    screen_names = @client.followers.collect{|follower| @client.user(follower).screen_name}
+  end
+  
+  def spam_my_followers(message)
+    self.followers_list.each do |follower|
+      self.dm(follower,message)
+    end
+  end
+  
   def run
     command = ""
     while command != "q"
@@ -46,6 +57,7 @@ class MicroBlogger
         when 'q' then puts "Goodbye!"
         when 't' then tweet(parts[1..-1].join(" "))
         when 'dm' then dm(parts[1], parts[2..-1].join(" "))
+        when 'spam' then spam_my_followers(parts[2..-1].join(" "))
         else
            puts "Sorry, I don't know how to #{command}"
       end
